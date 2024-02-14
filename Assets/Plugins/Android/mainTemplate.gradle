@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.4'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+    
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 30
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
+        versionCode 1
+        versionName '1.0'
+        consumerProguardFiles 'proguard-unity.txt'
+    }
+
+    aaptOptions {
+        noCompress = ['.ress', '.resource', '.obb'] + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
+    packagingOptions {
+        doNotStrip '*/armeabi-v7a/*.so'
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'com.android.tools.build' && details.requested.name == 'gradle') {
+                    details.useVersion '7.0.4' // Use a versão compatível do Gradle Plugin para Android
+                }
+            }
+        }
+    }
+
+    // Adicione essa seção para suportar o novo Android Gradle Plugin
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation "androidx.annotation:annotation:1.7.0"
+    implementation 'androidx.core:core:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.4.0'
+    implementation 'androidx.fragment:fragment:1.4.0'
+}
